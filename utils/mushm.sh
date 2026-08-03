@@ -223,7 +223,7 @@ main() {
 
             "${MAGENTA}[29]${RESET} ${YELLOW}Experimental${RESET} Install Arch Chroot"
             "${MAGENTA}[30]${RESET} ${YELLOW}Experimental${RESET} Install Gento Dev Env"
-            "${MAGENTA}[30]${RESET} ${YELLOW}Experimental${RESET} Launch Chard"
+            "${MAGENTA}[31]${RESET} ${YELLOW}Experimental${RESET} Launch Chard"
         )
 
         half=$(( (${#options[@]} + 1) / 2 ))
