@@ -223,6 +223,7 @@ main() {
 
             "${MAGENTA}[29]${RESET} ${YELLOW}Experimental${RESET} Install Arch Chroot"
             "${MAGENTA}[30]${RESET} ${YELLOW}Experimental${RESET} Install Gento Dev Env"
+            "${MAGENTA}[30]${RESET} ${YELLOW}Experimental${RESET} Launch Chard"
         )
 
         half=$(( (${#options[@]} + 1) / 2 ))
@@ -277,6 +278,7 @@ main() {
            # 29) runpy /mnt/stateful_partition/murkmod/python/util/backup/backup_manager.sh ;;
             29) runjob arch ;;
             30) runjob gento ;;
+            31) runjob chard_launch ;;
             400) runjob do_dev_updates && exit 0 ;;
             101) runjob hard_disable_nokill ;;
             111) runjob hard_enable_nokill ;;
@@ -1110,3 +1112,7 @@ if [ "$0" = "$BASH_SOURCE" ]; then
         main
     fi
 fi
+
+chard_launch() {
+    chard root
+}
