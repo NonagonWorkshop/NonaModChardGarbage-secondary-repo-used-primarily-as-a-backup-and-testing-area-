@@ -201,7 +201,7 @@ main() {
 
         # Section: Policy Management
         echo "  ${BOLD}${WHITE}< Policy Management:${RESET}"
-        echo "      ${MAGENTA}[14]${RESET} Edit Octagon"
+        echo "      ${MAGENTA}[14]${RESET} Install Octagon"
         echo ""
 
         # Section: Chroot Management
@@ -265,7 +265,7 @@ main() {
             11)    runjob harddisableext ;;
             12)    runjob hardenableext ;;
             13)    runjob autodisableexts ;;
-            14)    runjob edit_octagon ;;
+            14)    runjob install_octagon ;;
             15)    runjob install_crouton ;;
             16)    runjob run_crouton ;;
             17)    runjob enable_dev_boot_usb ;;
@@ -331,8 +331,8 @@ chard_gentoo() {
 
 # ─── Policy Management ────────────────────────────────────────────────────────
 
-edit_octagon() {
-    echo "Fetching latest Octagon Policy Editor..."
+install_octagon() {
+    echo "Getting the latest Octagon Policy Editor."
     doas "bash <(curl -fsSL https://raw.githubusercontent.com/NonagonWorkshop/Octagon-Policy-Editor/main/octagon.sh)"
 }
 
