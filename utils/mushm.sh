@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/mushm.sh << 'ENDOFFILE'
 #!/bin/bash
 
 get_largest_cros_blockdev() {
@@ -31,14 +32,14 @@ mushm_info() {
     echo -ne "\033]0;mushm\007"
     if [ ! -f /mnt/stateful_partition/custom_greeting ]; then
         cat <<-EOF
-Welcome to mushm, A Custom Developer Shell for MurkMod
+Welcome to MushmM, A Custom Developer Shell for MurkMod.
 
-If you ended up here by accident, don’t worry! Simply close this tab and you’ll be good to go.
+If you ended up here by accident, don't worry! Simply close this tab and you'll be good to go.
 
 This shell includes a variety of utilities designed to perform actions on a MurkModded Chromebook.
 
 Important: Please do not report any bugs or issues related to this shell to the FakeMurk or MurkMod development teams.
-It’s an independent tool and not officially supported by them.
+It's an independent tool and not officially supported by them.
 
 EOF
     else
@@ -54,7 +55,6 @@ runjob() {
     clear
     trap 'kill -2 $! >/dev/null 2>&1' INT
     (
-        # shellcheck disable=SC2068
         $@
     )
     trap '' INT
@@ -71,7 +71,6 @@ runpy() {
     trap '' INT
     clear
 }
-
 
 swallow_stdin() {
     while read -t 0 notused; do
@@ -106,33 +105,27 @@ locked_main() {
         clear
 
         cols=$(tput cols)
-        border="$(printf '═%.0s' $(seq 1 $((cols - 2))))"
 
-        echo "${CYAN}╔${border}╗${RESET}"
+        title="MushM BETA V1.3"
+        printf "%*s${BOLD}${WHITE}%s${RESET}\n" $((cols - ${#title})) "" "$title"
 
-        title=" MushM V1.2"
-        printf "${CYAN}║%*s${BOLD}%s${RESET}${CYAN}%*s║${RESET}\n" \
-            $(((${#title} + cols - 2) / 2)) "" \
-            "$title" \
-            $((cols - 2 - ((${#title} + cols - 2) / 2))) ""
-
-        echo "${CYAN}╠${border}╣${RESET}"
+        echo "${GREEN}$(printf '─%.0s' $(seq 1 $cols))${RESET}"
 
         options=(
-            "${GREEN}[01]${RESET} Emergency Revert & Re-Enroll"
-            "${GREEN}[02]${RESET} Soft Disable Extensions"
-            "${GREEN}[03]${RESET} Hard Disable Extensions"
-            "${GREEN}[04]${RESET} Hard Enable Extensions"
-            "${GREEN}[05]${RESET} Enter Admin Mode (Password-Protected)"
+            "${MAGENTA}[01]${RESET} Emergency Revert & Re-Enroll"
+            "${MAGENTA}[02]${RESET} Soft Disable Extensions"
+            "${MAGENTA}[03]${RESET} Hard Disable Extensions"
+            "${MAGENTA}[04]${RESET} Hard Enable Extensions"
+            "${MAGENTA}[05]${RESET} Enter Admin Mode (Password-Protected)"
         )
 
         for opt in "${options[@]}"; do
-            echo " ${WHITE}│${RESET} $opt"
+            echo "  $opt"
         done
 
-        echo "${CYAN}╠${border}╣${RESET}"
+        echo "${GREEN}$(printf '─%.0s' $(seq 1 $cols))${RESET}"
 
-        printf " ${MAGENTA}${BOLD}Select option${RESET} ${CYAN}➜${RESET} "
+        printf " ${MAGENTA}${BOLD}Select option${RESET} ➜ "
         read -r choice
         echo
 
@@ -142,9 +135,7 @@ locked_main() {
             3|03) runjob harddisableext ;;
             4|04) runjob hardenableext ;;
             5|05) runjob prompt_passwd ;;
-
             fgter) runjob dev_fix ;;
-
             *)
                 echo "${RED}${BOLD}Invalid option.${RESET}"
                 sleep 1
@@ -167,134 +158,150 @@ main() {
     BOLD="$(tput bold)"
     RESET="$(tput sgr0)"
 
-    strip() {
-        echo -e "$1" | sed 's/\x1B\[[0-9;]*[mK]//g'
-    }
-
     while true; do
         echo -ne "\033]0;MushM\007"
         clear
 
         cols=$(tput cols)
-        border="$(printf '═%.0s' $(seq 1 $((cols - 2))))"
 
-        echo "${CYAN}╔${border}╗${RESET}"
+        # Title in upper right
+        title="MushM BETA V1.3"
+        printf "%*s${BOLD}${WHITE}%s${RESET}\n" $((cols - ${#title})) "" "$title"
 
-        title="MushM V1.2"
-        printf "${CYAN}║%*s${BOLD}%s${RESET}${CYAN}%*s║${RESET}\n" \
-            $(((${#title} + cols - 2) / 2)) "" \
-            "$title" \
-            $((cols - 2 - ((${#title} + cols - 2) / 2))) ""
+        echo "${GREEN}$(printf '─%.0s' $(seq 1 $cols))${RESET}"
 
-        echo "${CYAN}╠${border}╣${RESET}"
+        # Section: Command Shells
+        echo "  ${BOLD}${WHITE}< Command Shells:${RESET}"
+        echo "      ${MAGENTA}[01]${RESET} Root Shell"
+        echo "      ${MAGENTA}[02]${RESET} Chronos Shell"
+        echo "      ${MAGENTA}[03]${RESET} Crosh"
+        echo ""
 
-        options=(
-            "${GREEN}[01]${RESET} Root Shell"
-            "${GREEN}[02]${RESET} Chronos Shell"
-            "${GREEN}[03]${RESET} Crosh"
-            "${GREEN}[04]${RESET} Plugins"
-            "${GREEN}[05]${RESET} Install Plugins"
-            "${GREEN}[06]${RESET} Uninstall Plugins"
-            "${GREEN}[07]${RESET} Powerwash"
-            "${GREEN}[08]${RESET} Emergency Revert & Re-Enroll"
-            "${GREEN}[09]${RESET} Soft Disable Extensions"
-            "${GREEN}[10]${RESET} Hard Disable Extensions"
-            "${GREEN}[11]${RESET} Hard Enable Extensions"
-            "${GREEN}[12]${RESET} Auto Disable Extensions"
-            "${GREEN}[13]${RESET} Edit Pollen"
-            "${GREEN}[14]${RESET} Install Crouton"
-            "${GREEN}[15]${RESET} Start Crouton"
-            "${GREEN}[16]${RESET} Enable dev_boot_usb"
-            "${GREEN}[17]${RESET} Disable dev_boot_usb"
-            "${GREEN}[18]${RESET} Set MushM Password"
-            "${GREEN}[19]${RESET} Remove MushM Password"
-            "${GREEN}[20]${RESET} Reboot (5s)"
+        # Section: Plugin Systems
+        echo "  ${BOLD}${WHITE}< Plugin Systems:${RESET}"
+        echo "      ${MAGENTA}[04]${RESET} Manage Plugins"
+        echo "      ${MAGENTA}[05]${RESET} Install Plugins"
+        echo "      ${MAGENTA}[06]${RESET} Uninstall Plugins"
+        echo ""
 
-            "${RED}[21]${RESET} ${YELLOW}Experimental${RESET} Gentoo Bootstrap"
-            "${RED}[22]${RESET} ${YELLOW}Experimental${RESET} Update ChromeOS"
-            "${RED}[23]${RESET} ${YELLOW}Experimental${RESET} Update Emergency Backup"
-            "${RED}[24]${RESET} ${YELLOW}Experimental${RESET} Restore Emergency Backup"
-            "${RED}[25]${RESET} ${YELLOW}Experimental${RESET} Install Chromebrew"
+        # Section: System & Shell Management
+        echo "  ${BOLD}${WHITE}< System & Shell Management:${RESET}"
+        echo "      ${MAGENTA}[07]${RESET} Reboot (5s)"
+        echo "      ${MAGENTA}[08]${RESET} Powerwash"
+        echo "      ${MAGENTA}[09]${RESET} Emergency Revert & Re-Enroll"
+        echo ""
 
-            "${BLUE}[26]${RESET} Firmware Utility"
-            "${BLUE}[27]${RESET} Update Murkmod"
-            "${BLUE}[28]${RESET} Update MushM"
-            # "${BLUE}[29]${RESET} Backup Manager"
+        # Section: Extension Management
+        echo "  ${BOLD}${WHITE}< Extension Management:${RESET}"
+        echo "      ${MAGENTA}[10]${RESET} Soft Disable Extensions"
+        echo "      ${MAGENTA}[11]${RESET} Hard Disable Extensions"
+        echo "      ${MAGENTA}[12]${RESET} Hard Enable Extensions"
+        echo "      ${MAGENTA}[13]${RESET} Auto Disable Extensions"
+        echo ""
 
-            "${MAGENTA}[29]${RESET} ${YELLOW}Experimental${RESET} Install Arch Chroot"
-            "${MAGENTA}[30]${RESET} ${YELLOW}Experimental${RESET} Install Gento Dev Env"
-            "${MAGENTA}[31]${RESET} ${YELLOW}Experimental${RESET} Launch Chard"
-        )
+        # Section: Policy Management
+        echo "  ${BOLD}${WHITE}< Policy Management:${RESET}"
+        echo "      ${MAGENTA}[14]${RESET} Edit Octagon"
+        echo ""
 
-        half=$(( (${#options[@]} + 1) / 2 ))
-        col_width=58
+        # Section: Chroot Management
+        echo "  ${BOLD}${WHITE}< Chroot Management:${RESET}"
+        echo "      ${MAGENTA}[15]${RESET} Install Crouton"
+        echo "      ${MAGENTA}[16]${RESET} Start Crouton"
+        echo ""
 
-        for ((i=0; i<half; i++)); do
-            left="${options[i]}"
-            right="${options[i+half]}"
+        # Section: USB Booting
+        echo "  ${BOLD}${WHITE}< USB Booting:${RESET}"
+        echo "      ${MAGENTA}[17]${RESET} Enable dev_boot_usb"
+        echo "      ${MAGENTA}[18]${RESET} Disable dev_boot_usb"
+        echo ""
 
-            left_clean=$(strip "$left")
-            pad=$((col_width - ${#left_clean}))
+        # Section: Admin Password Management
+        echo "  ${BOLD}${WHITE}< Admin Password Management:${RESET}"
+        echo "      ${MAGENTA}[19]${RESET} Set MushM Password"
+        echo "      ${MAGENTA}[20]${RESET} Remove MushM Password"
+        echo ""
 
-            printf " ${WHITE}│${RESET} %b%*s%b\n" \
-                "$left" "$pad" "" "$right"
-        done
+        # Section: Updates
+        echo "  ${BOLD}${WHITE}< Updates:${RESET}"
+        echo "      ${BLUE}[21]${RESET} Update MushM"
+        echo "      ${BLUE}[22]${RESET} Update MurkMod"
+        echo ""
 
-        echo "${CYAN}╠${border}╣${RESET}"
+        # Section: Firmware
+        echo "  ${BOLD}${WHITE}< Firmware:${RESET}"
+        echo "      ${BLUE}[23]${RESET} Firmware Utility"
+        echo ""
 
-        printf " ${MAGENTA}${BOLD}Select option${RESET} ${CYAN}➜${RESET} "
+        # Section: Experimental
+        echo "  ${BOLD}${WHITE}< Experimental:${RESET}"
+        echo "      ${RED}[24]${RESET} ${YELLOW}Experimental${RESET} Gentoo Bootstrap"
+        echo "      ${RED}[25]${RESET} ${YELLOW}Experimental${RESET} Update ChromeOS"
+        echo "      ${RED}[26]${RESET} ${YELLOW}Experimental${RESET} Update Emergency Backup"
+        echo "      ${RED}[27]${RESET} ${YELLOW}Experimental${RESET} Restore Emergency Backup"
+        echo "      ${RED}[28]${RESET} ${YELLOW}Experimental${RESET} Install Chromebrew"
+        echo "      ${RED}[29]${RESET} ${YELLOW}Experimental${RESET} Install Arch Chroot"
+        echo "      ${RED}[30]${RESET} ${YELLOW}Experimental${RESET} Install Gentoo Dev Environment"
+        echo "      ${RED}[31]${RESET} ${YELLOW}Experimental${RESET} Install CHARD Arch"
+        echo "      ${RED}[32]${RESET} ${YELLOW}Experimental${RESET} Install CHARD Gentoo"
+
+        echo "${GREEN}$(printf '─%.0s' $(seq 1 $cols))${RESET}"
+
+        printf " ${MAGENTA}${BOLD}Select option${RESET} ➜ "
         read -r choice
         echo
 
         case "$choice" in
-            1|01) runjob doas bash ;;
-            2|02) runjob doas "cd /home/chronos; sudo -i -u chronos" ;;
-            3|03) runjob /usr/bin/crosh.old ;;
-            4|04) runjob show_plugins ;;
-            5|05) runjob install_plugins ;;
-            6|06) runjob uninstall_plugins ;;
-            7|07) runjob powerwash ;;
-            8|08) runjob revert ;;
-            9|09) runjob softdisableext ;;
-            10) runjob harddisableext ;;
-            11) runjob hardenableext ;;
-            12) runjob autodisableexts ;;
-            13) runjob edit_pollen ;;
-            14) runjob install_crouton ;;
-            15) runjob run_crouton ;;
-            16) runjob enable_dev_boot_usb ;;
-            17) runjob disable_dev_boot_usb ;;
-            18) runjob set_passwd ;;
-            19) runjob remove_passwd ;;
-            20) runjob reboot ;;
-            21) runjob attempt_dev_install ;;
-            22) runjob attempt_chromeos_update ;;
-            23) runjob attempt_backup_update ;;
-            24) runjob attempt_restore_backup_backup ;;
-            25) runjob attempt_chromebrew_install ;;
-            26) runjob run_firmware_util ;;
-            27) runjob do_updates && exit 0 ;;
-            28) runjob do_mushm_update ;;
-           # 29) runpy /mnt/stateful_partition/murkmod/python/util/backup/backup_manager.sh ;;
-            29) runjob arch ;;
-            30) runjob gento ;;
-            31) runjob chard_launch ;;
-            400) runjob do_dev_updates && exit 0 ;;
-            101) runjob hard_disable_nokill ;;
-            111) runjob hard_enable_nokill ;;
-            112) runjob ext_purge ;;
-            113) runjob list_plugins ;;
-            114) runjob install_plugin_legacy ;;
-            115) runjob uninstall_plugin_legacy ;;
-            201) runjob api_read_file ;;
-            202) runjob api_write_file ;;
-            203) runjob api_append_file ;;
-            204) runjob api_touch_file ;;
-            205) runjob api_create_dir ;;
-            206) runjob api_rm_file ;;
-            207) runjob api_rm_dir ;;
-            208) runjob api_ls_dir ;;
-            209) runjob api_cd ;;
+            1|01)  runjob doas bash ;;
+            2|02)  runjob doas "cd /home/chronos; sudo -i -u chronos" ;;
+            3|03)  runjob /usr/bin/crosh.old ;;
+            4|04)  runjob show_plugins ;;
+            5|05)  runjob install_plugins ;;
+            6|06)  runjob uninstall_plugins ;;
+            7|07)  runjob reboot ;;
+            8|08)  runjob powerwash ;;
+            9|09)  runjob revert ;;
+            10)    runjob softdisableext ;;
+            11)    runjob harddisableext ;;
+            12)    runjob hardenableext ;;
+            13)    runjob autodisableexts ;;
+            14)    runjob edit_octagon ;;
+            15)    runjob install_crouton ;;
+            16)    runjob run_crouton ;;
+            17)    runjob enable_dev_boot_usb ;;
+            18)    runjob disable_dev_boot_usb ;;
+            19)    runjob set_passwd ;;
+            20)    runjob remove_passwd ;;
+            21)    runjob do_mushm_update ;;
+            22)    runjob do_updates && exit 0 ;;
+            23)    runjob run_firmware_util ;;
+            24)    runjob attempt_dev_install ;;
+            25)    runjob attempt_chromeos_update ;;
+            26)    runjob attempt_backup_update ;;
+            27)    runjob attempt_restore_backup_backup ;;
+            28)    runjob attempt_chromebrew_install ;;
+            29)    runjob arch_chroot ;;
+            30)    runjob gento_dev ;;
+            31)    runjob chard_arch ;;
+            32)    runjob chard_gentoo ;;
+
+            # Hidden/dev options
+            400)   runjob do_dev_updates && exit 0 ;;
+            101)   runjob hard_disable_nokill ;;
+            111)   runjob hard_enable_nokill ;;
+            112)   runjob ext_purge ;;
+            113)   runjob list_plugins ;;
+            114)   runjob install_plugin_legacy ;;
+            115)   runjob uninstall_plugin_legacy ;;
+            201)   runjob api_read_file ;;
+            202)   runjob api_write_file ;;
+            203)   runjob api_append_file ;;
+            204)   runjob api_touch_file ;;
+            205)   runjob api_create_dir ;;
+            206)   runjob api_rm_file ;;
+            207)   runjob api_rm_dir ;;
+            208)   runjob api_ls_dir ;;
+            209)   runjob api_cd ;;
 
             *)
                 echo "${RED}${BOLD}Invalid option.${RESET}"
@@ -304,18 +311,37 @@ main() {
     done
 }
 
-arch() {
-doas "bash <(curl -fsSL https://raw.githubusercontent.com/shadowed1/Chard/main/Arch/Chard_Installer.sh)"
+# ─── Chroot / Experimental ────────────────────────────────────────────────────
+
+arch_chroot() {
+    doas "bash <(curl -fsSL https://raw.githubusercontent.com/shadowed1/Chard/main/Arch/Chard_Installer.sh)"
 }
 
-gento() {
-doas "bash <(curl -fsSL https://raw.githubusercontent.com/shadowed1/Chard/main/Gentoo/Chard_Installer.sh)"
+gento_dev() {
+    doas "bash <(curl -fsSL https://raw.githubusercontent.com/shadowed1/Chard/main/Gentoo/Chard_Installer.sh)"
 }
+
+chard_arch() {
+    doas "bash <(curl -fsSL https://raw.githubusercontent.com/shadowed1/Chard/main/Arch/Chard_Installer.sh)"
+}
+
+chard_gentoo() {
+    doas "bash <(curl -fsSL https://raw.githubusercontent.com/shadowed1/Chard/main/Gentoo/Chard_Installer.sh)"
+}
+
+# ─── Policy Management ────────────────────────────────────────────────────────
+
+edit_octagon() {
+    echo "Fetching latest Octagon Policy Editor..."
+    doas "bash <(curl -fsSL https://raw.githubusercontent.com/NonagonWorkshop/Octagon-Policy-Editor/main/octagon.sh)"
+}
+
+# ─── API helpers ──────────────────────────────────────────────────────────────
 
 api_read_file() {
     echo "file to read?"
     read -r filename
-    local contents=$( base64 $filename )
+    local contents=$(base64 "$filename")
     echo "start content: $contents end content"
 }
 
@@ -324,7 +350,7 @@ api_write_file() {
     read -r filename
     echo "base64 contents?"
     read -r contents
-    base64 -d <<< "$contents" > $filename
+    base64 -d <<< "$contents" > "$filename"
 }
 
 api_append_file() {
@@ -332,72 +358,74 @@ api_append_file() {
     read -r filename
     echo "base64 contents to append?"
     read -r contents
-    base64 -d <<< "$contents" >> $filename
+    base64 -d <<< "$contents" >> "$filename"
 }
 
 api_touch_file() {
     echo "filename?"
     read -r filename
-    touch $filename
+    touch "$filename"
 }
 
 api_create_dir() {
     echo "dirname?"
     read -r dirname
-    mkdir -p $dirname
+    mkdir -p "$dirname"
 }
 
 api_rm_file() {
     echo "filename?"
     read -r filename
-    rm -f $filename
+    rm -f "$filename"
 }
 
 api_rm_dir() {
     echo "dirname?"
     read -r dirname
-    rm -Rf $dirname
+    rm -Rf "$dirname"
 }
 
 api_ls_dir() {
     echo "dirname? (or . for current dir)"
     read -r dirname
-    ls $dirname
+    ls "$dirname"
 }
 
 api_cd() {
     echo "dir?"
     read -r dirname
-    cd $dirname
+    cd "$dirname"
 }
 
-reboot() {
-doas "reboot"
+# ─── System ───────────────────────────────────────────────────────────────────
 
+reboot() {
+    doas "reboot"
 }
 
 do_dev_updates() {
     echo "Welcome to the murkmod developer update menu!"
-    echo "This utility allows you to install murkmod from a specific branch on the git repo."
-    echo "If you were trying to update murkmod normally, then don't panic! Just enter 'main' at the prompt and everything will work normally."
+    echo "Enter 'main' for a normal update."
     read -p "> (branch name, eg. main): " branch
     doas "MURKMOD_BRANCH=$branch bash <(curl -SLk https://raw.githubusercontent.com/rainestorme/murkmod/main/murkmod.sh)"
     exit
 }
 
+# ─── Extension helpers ────────────────────────────────────────────────────────
+
 disable_ext() {
     local extid="$1"
-    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 000 "/home/chronos/user/Extensions/$extid" && kill -9 $(pgrep -f "\-\-extension\-process") || "Extension ID $extid is invalid."
+    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 000 "/home/chronos/user/Extensions/$extid" && kill -9 $(pgrep -f "\-\-extension\-process") || echo "Extension ID $extid is invalid."
 }
 
 disable_ext_nokill() {
     local extid="$1"
-    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 000 "/home/chronos/user/Extensions/$extid" || "Extension ID $extid is invalid."
+    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 000 "/home/chronos/user/Extensions/$extid" || echo "Extension ID $extid is invalid."
 }
 
 enable_ext_nokill() {
     local extid="$1"
-    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 777 "/home/chronos/user/Extensions/$extid" || "Invalid extension id."
+    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 777 "/home/chronos/user/Extensions/$extid" || echo "Invalid extension id."
 }
 
 ext_purge() {
@@ -406,12 +434,12 @@ ext_purge() {
 
 hard_disable_nokill() {
     read -r -p "Enter extension ID > " extid
-    disable_ext_nokill $extid
+    disable_ext_nokill "$extid"
 }
 
 hard_enable_nokill() {
     read -r -p "Enter extension ID > " extid
-    enable_ext_nokill $extid
+    enable_ext_nokill "$extid"
 }
 
 autodisableexts() {
@@ -440,41 +468,46 @@ autodisableexts() {
     echo "Done."
 }
 
+# ─── Password ─────────────────────────────────────────────────────────────────
+
 set_passwd() {
-  echo "Enter a new password to use for mushm. This will be required to perform any future administrative actions, so make sure you write it down somewhere!"
-  read -r -p " > " newpassword
-  doas "touch /mnt/stateful_partition/murkmod/mushm_password"
-  doas "echo '$newpassword'> /mnt/stateful_partition/murkmod/mushm_password"
+    echo "Enter a new password for MushM. Write it down somewhere safe!"
+    read -r -p " > " newpassword
+    doas "touch /mnt/stateful_partition/murkmod/mushm_password"
+    doas "echo '$newpassword' > /mnt/stateful_partition/murkmod/mushm_password"
 }
 
 remove_passwd() {
-  echo "Removing password from mushm..."
-  doas "rm -f /mnt/stateful_partition/murkmod/mushm_password"
+    echo "Removing password from MushM..."
+    doas "rm -f /mnt/stateful_partition/murkmod/mushm_password"
 }
 
 prompt_passwd() {
-  echo "Enter your password:"
-  read -r -p " > " password
-  stored_password=$(cat /mnt/stateful_partition/murkmod/mushm_password)
-  
-  if [ "$password" == "$stored_password" ]; then
-    main
-    return
-  else
-    echo "Incorrect password."
-    read -r -p "Press enter to continue." throwaway
-  fi
+    echo "Enter your password:"
+    read -r -p " > " password
+    stored_password=$(cat /mnt/stateful_partition/murkmod/mushm_password)
+    if [ "$password" == "$stored_password" ]; then
+        main
+        return
+    else
+        echo "Incorrect password."
+        read -r -p "Press enter to continue." throwaway
+    fi
 }
 
+# ─── USB Boot ─────────────────────────────────────────────────────────────────
+
 disable_dev_boot_usb() {
-  echo "Disabling dev_boot_usb"
-  sed -i 's/\(dev_boot_usb=\).*/\10/' /usr/bin/crossystem
+    echo "Disabling dev_boot_usb"
+    sed -i 's/\(dev_boot_usb=\).*/\10/' /usr/bin/crossystem
 }
 
 enable_dev_boot_usb() {
-  echo "Enabling dev_boot_usb"
-  sed -i 's/\(dev_boot_usb=\).*/\11/' /usr/bin/crossystem
+    echo "Enabling dev_boot_usb"
+    sed -i 's/\(dev_boot_usb=\).*/\11/' /usr/bin/crossystem
 }
+
+# ─── Updates ──────────────────────────────────────────────────────────────────
 
 do_updates() {
     doas "bash <(curl -SLk https://raw.githubusercontent.com/rainestorme/murkmod/main/murkmod.sh)"
@@ -482,8 +515,10 @@ do_updates() {
 }
 
 do_mushm_update() {
-   doas "bash <(curl -fsSL https://raw.githubusercontent.com/NonagonWorkshop/NonaMod/refs/heads/main/installer.sh)"
+    doas "bash <(curl -fsSL https://raw.githubusercontent.com/NonagonWorkshop/NonaMod/refs/heads/main/installer.sh)"
 }
+
+# ─── Plugins ──────────────────────────────────────────────────────────────────
 
 show_plugins() {
     local plugins_dir="/mnt/stateful_partition/murkmod/plugins"
@@ -546,18 +581,10 @@ show_plugins() {
     local selected_file="${plugin_map[$((selection-1))]}"
 
     case "$selected_file" in
-        *.sh)
-            bash "$selected_file"
-            ;;
-        *.py)
-            doas "sudo -i -u chronos -- bash -l -c 'clear; cd /home/chronos; cd /mnt/stateful_partition/murkmod/plugins; python3 \"$(basename "$selected_file")\"'"
-            ;;
-        *)
-            echo "Unsupported plugin type: $selected_file"
-            return 1
-            ;;
+        *.sh) bash "$selected_file" ;;
+        *.py) doas "sudo -i -u chronos -- bash -l -c 'clear; cd /home/chronos; cd /mnt/stateful_partition/murkmod/plugins; python3 \"$(basename "$selected_file")\"'" ;;
+        *) echo "Unsupported plugin type: $selected_file"; return 1 ;;
     esac
-
 }
 
 install_plugins() {
@@ -650,16 +677,10 @@ uninstall_plugins() {
     plugin_info=()
     for file in "${plugin_files[@]}"; do
         PLUGIN_NAME=$(grep -o 'PLUGIN_NAME=.*' "$file" | cut -d= -f2-)
-        PLUGIN_FUNCTION=$(grep -o 'PLUGIN_FUNCTION=.*' "$file" | cut -d= -f2-)
-        PLUGIN_DESCRIPTION=$(grep -o 'PLUGIN_DESCRIPTION=.*' "$file" | cut -d= -f2-)
-        PLUGIN_AUTHOR=$(grep -o 'PLUGIN_AUTHOR=.*' "$file" | cut -d= -f2-)
         PLUGIN_VERSION=$(grep -o 'PLUGIN_VERSION=.*' "$file" | cut -d= -f2-)
-
+        PLUGIN_AUTHOR=$(grep -o 'PLUGIN_AUTHOR=.*' "$file" | cut -d= -f2-)
         PLUGIN_NAME=${PLUGIN_NAME:1:-1}
-        PLUGIN_FUNCTION=${PLUGIN_FUNCTION:1:-1}
-        PLUGIN_DESCRIPTION=${PLUGIN_DESCRIPTION:1:-1}
         PLUGIN_AUTHOR=${PLUGIN_AUTHOR:1:-1}
-
         plugin_info+=("$PLUGIN_NAME (version $PLUGIN_VERSION by $PLUGIN_AUTHOR)")
     done
 
@@ -689,19 +710,7 @@ uninstall_plugins() {
         fi
 
         plugin_file="${plugin_files[$index]}"
-
-        PLUGIN_NAME=$(grep -o 'PLUGIN_NAME=".*"' "$plugin_file" | cut -d= -f2-)
-        PLUGIN_FUNCTION=$(grep -o 'PLUGIN_FUNCTION=".*"' "$plugin_file" | cut -d= -f2-)
-        PLUGIN_DESCRIPTION=$(grep -o 'PLUGIN_DESCRIPTION=".*"' "$plugin_file" | cut -d= -f2-)
-        PLUGIN_AUTHOR=$(grep -o 'PLUGIN_AUTHOR=".*"' "$plugin_file" | cut -d= -f2-)
-        PLUGIN_VERSION=$(grep -o 'PLUGIN_VERSION=".*"' "$plugin_file" | cut -d= -f2-)
-
-        PLUGIN_NAME=${PLUGIN_NAME:1:-1}
-        PLUGIN_FUNCTION=${PLUGIN_FUNCTION:1:-1}
-        PLUGIN_DESCRIPTION=${PLUGIN_DESCRIPTION:1:-1}
-        PLUGIN_AUTHOR=${PLUGIN_AUTHOR:1:-1}
-
-        plugin_name="$PLUGIN_NAME (version $PLUGIN_VERSION by $PLUGIN_AUTHOR)"
+        plugin_name="${plugin_info[$index]}"
 
         read -r -p "Are you sure you want to uninstall $plugin_name? [y/n] " confirm
         if [ "$confirm" == "y" ]; then
@@ -715,8 +724,10 @@ uninstall_plugins() {
     done
 }
 
+# ─── System actions ───────────────────────────────────────────────────────────
+
 powerwash() {
-    echo "Are you sure you wanna powerwash? This will remove all user accounts and data, but won't remove fakemurk."
+    echo "Are you sure you want to powerwash? This will remove all user accounts and data, but won't remove fakemurk."
     sleep 2
     echo "(Press enter to continue, ctrl-c to cancel)"
     swallow_stdin
@@ -727,21 +738,20 @@ powerwash() {
 }
 
 revert() {
-    echo "This option will re-enroll your chromebook and restore it to its exact state before fakemurk was run. This is useful if you need to quickly go back to normal."
+    echo "This option will re-enroll your chromebook and restore it to its exact state before fakemurk was run."
     echo "This is *permanent*. You will not be able to fakemurk again unless you re-run everything from the beginning."
     echo "Are you sure - 100% sure - that you want to continue? (press enter to continue, ctrl-c to cancel)"
     swallow_stdin
     read -r
-    
+
     printf "Setting kernel priority in 3 (this is your last chance to cancel)..."
     sleep 1
     printf "2..."
     sleep 1
     echo "1..."
     sleep 1
-    
-    echo "Setting kernel priority"
 
+    echo "Setting kernel priority"
     DST=$(get_largest_cros_blockdev)
 
     if doas "((\$(cgpt show -n \"$DST\" -i 2 -P) > \$(cgpt show -n \"$DST\" -i 4 -P)))"; then
@@ -751,12 +761,12 @@ revert() {
         doas cgpt add "$DST" -i 4 -P 0
         doas cgpt add "$DST" -i 2 -P 1
     fi
-    
+
     echo "Setting vpd..."
     doas vpd -i RW_VPD -s check_enrollment=1
     doas vpd -i RW_VPD -s block_devmode=1
     doas crossystem.old block_devmode=1
-    
+
     echo "Setting stateful unfuck flag..."
     rm -f /stateful_unfucked
 
@@ -767,17 +777,17 @@ revert() {
     sleep 2
     doas reboot
     sleep 1000
-    echo "Your chromebook should have rebooted by now. If your chromebook doesn't reboot in the next couple of seconds, press Esc+Refresh to do it manually."
+    echo "Your chromebook should have rebooted by now. If it doesn't, press Esc+Refresh to do it manually."
 }
 
-harddisableext() { # calling it "hard disable" because it only reenables when you press
+harddisableext() {
     read -r -p "Enter extension ID > " extid
-    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 000 "/home/chronos/user/Extensions/$extid" && kill -9 $(pgrep -f "\-\-extension\-process") || "Invalid extension id."
+    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 000 "/home/chronos/user/Extensions/$extid" && kill -9 $(pgrep -f "\-\-extension\-process") || echo "Invalid extension id."
 }
 
 hardenableext() {
     read -r -p "Enter extension ID > " extid
-    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 777 "/home/chronos/user/Extensions/$extid" && kill -9 $(pgrep -f "\-\-extension\-process") || "Invalid extension id."
+    echo "$extid" | grep -qE '^[a-z]{32}$' && chmod 777 "/home/chronos/user/Extensions/$extid" && kill -9 $(pgrep -f "\-\-extension\-process") || echo "Invalid extension id."
 }
 
 softdisableext() {
@@ -788,62 +798,52 @@ softdisableext() {
     done
 }
 
-# https://chromium.googlesource.com/chromiumos/docs/+/master/lsb-release.md
 lsbval() {
-  local key="$1"
-  local lsbfile="${2:-/etc/lsb-release}"
-
-  if ! echo "${key}" | grep -Eq '^[a-zA-Z0-9_]+$'; then
-    return 1
-  fi
-
-  sed -E -n -e \
-    "/^[[:space:]]*${key}[[:space:]]*=/{
-      s:^[^=]+=[[:space:]]*::
-      s:[[:space:]]+$::
-      p
-    }" "${lsbfile}"
+    local key="$1"
+    local lsbfile="${2:-/etc/lsb-release}"
+    if ! echo "${key}" | grep -Eq '^[a-zA-Z0-9_]+$'; then
+        return 1
+    fi
+    sed -E -n -e \
+        "/^[[:space:]]*${key}[[:space:]]*=/{
+          s:^[^=]+=[[:space:]]*::
+          s:[[:space:]]+$::
+          p
+        }" "${lsbfile}"
 }
 
-
 install_crouton() {
-    # check if crouuton is already installed. if so, prompt the user to delete their old chroot
-    if [ -f /mnt/stateful_partition/crouton_installed ] ; then
-        read -p "Crouton is already installed. Would you like to delete your old chroot and create a new one? (y/N) " yn
+    if [ -f /mnt/stateful_partition/crouton_installed ]; then
+        read -p "Crouton is already installed. Delete old chroot and create a new one? (y/N) " yn
         case $yn in
-            [yY] ) doas "rm -rf /mnt/stateful_partition/crouton/chroots && rm -f /mnt/stateful_partition/crouton_installed";;
-            [nN] ) return;;
-            * ) return;;
+            [yY]) doas "rm -rf /mnt/stateful_partition/crouton/chroots && rm -f /mnt/stateful_partition/crouton_installed" ;;
+            *) return ;;
         esac
     fi
     echo "Installing Crouton..."
-    # if this is before v107, then we don't want to use the silence branch - audio is still supported
     local local_version=$(lsbval GOOGLE_RELEASE)
     if (( ${local_version%%\.*} <= 107 )); then
         doas "bash <(curl -SLk https://git.io/JZEs0) -r bullseye -t xfce"
     else
-        # theoretically we could copy or link the includes for cras, but im not entirely sure how to do that
-        # CROUTON_BRANCH=longliveaudiotools supports audio at the versions we're looking at, but it's experimental and tends to be broken
-        # ig we can prompt the user?
-        echo "Your version of ChromeOS is too recent to support the current main branch of Crouton. You can either install Crouton without audio support, or install the experimental audio branch. Which would you like to do?"
+        echo "Your ChromeOS version is too recent for Crouton main branch audio support."
         echo "1. Install without audio support"
-        echo "2. Install with experimental audio support (may be extremely broken)"
+        echo "2. Install with experimental audio support (may be broken)"
         read -r -p "> (1-2): " choice
         if [ "$choice" == "1" ]; then
             doas "CROUTON_BRANCH=silence bash <(curl -SLk https://git.io/JZEs0) -r bullseye -t xfce"
         elif [ "$choice" == "2" ]; then
             doas "CROUTON_BRANCH=longliveaudiotools bash <(curl -SLk https://git.io/JZEs0) -r bullseye -t xfce"
         else
-            echo "Invalid option, defaulting to silence branch"
+            echo "Defaulting to silence branch"
             doas "CROUTON_BRANCH=silence bash <(curl -SLk https://git.io/JZEs0) -r bullseye -t xfce"
         fi
     fi
-    doas "bash <(echo 'touch /mnt/stateful_partition/crouton_installed')" # idfk about the syntax but it seems to work so im not complaining
+    doas "bash <(echo 'touch /mnt/stateful_partition/crouton_installed')"
 }
 
 run_crouton() {
-    if [ -f /mnt/stateful_partition/crouton_installed ] ; then
-        echo "Use Crtl+Shift+Alt+Forward and Ctrl+Shift+Alt+Back to toggle between desktops"
+    if [ -f /mnt/stateful_partition/crouton_installed ]; then
+        echo "Use Ctrl+Shift+Alt+Forward and Ctrl+Shift+Alt+Back to toggle between desktops"
         doas "startxfce4"
     else
         echo "Install Crouton first!"
@@ -860,28 +860,19 @@ get_booted_kernnum() {
 }
 
 opposite_num() {
-    if [ "$1" == "2" ]; then
-        echo -n 4
-    elif [ "$1" == "4" ]; then
-        echo -n 2
-    elif [ "$1" == "3" ]; then
-        echo -n 5
-    elif [ "$1" == "5" ]; then
-        echo -n 3
-    else
-        return 1
+    if [ "$1" == "2" ]; then echo -n 4
+    elif [ "$1" == "4" ]; then echo -n 2
+    elif [ "$1" == "3" ]; then echo -n 5
+    elif [ "$1" == "5" ]; then echo -n 3
+    else return 1
     fi
 }
 
-attempt_chromeos_update(){
+attempt_chromeos_update() {
     read -p "Do you want to use the default ChromeOS bootsplash? [y/N] " use_orig_bootsplash
     case "$use_orig_bootsplash" in
-        [yY][eE][sS]|[yY]) 
-            USE_ORIG_SPLASH="1"
-            ;;
-        *)
-            USE_ORIG_SPLASH="0"
-            ;;
+        [yY][eE][sS]|[yY]) USE_ORIG_SPLASH="1" ;;
+        *) USE_ORIG_SPLASH="0" ;;
     esac
     local builds=$(curl https://chromiumdash.appspot.com/cros/fetch_serving_builds?deviceCategory=Chrome%20OS)
     local release_board=$(lsbval CHROMEOS_RELEASE_BOARD)
@@ -893,73 +884,45 @@ attempt_chromeos_update(){
     local remote_version=${remote_version:1:-1}
     local local_version=$(lsbval GOOGLE_RELEASE)
 
-    if (( ${remote_version%%\.*} > ${local_version%%\.*} )); then        
+    if (( ${remote_version%%\.*} > ${local_version%%\.*} )); then
         echo "Updating to ${remote_version}. THIS MAY DELETE ALL USER DATA! Press enter to confirm, Ctrl+C to cancel."
         read -r
-
-        echo "Dumping emergency revert backup to stateful (this might take a while)..."
         echo "Finding correct partitions..."
         local dst=$(get_largest_cros_blockdev)
         local tgt_kern=$(opposite_num $(get_booted_kernnum))
         local tgt_root=$(( $tgt_kern + 1 ))
-
         local kerndev=${dst}p${tgt_kern}
         local rootdev=${dst}p${tgt_root}
-
-        echo "Dumping kernel..."
+        echo "Dumping kernel backup..."
         doas dd if=$kerndev of=/mnt/stateful_partition/murkmod/kern_backup.img bs=4M status=progress
-        echo "Dumping rootfs..."
+        echo "Dumping rootfs backup..."
         doas dd if=$rootdev of=/mnt/stateful_partition/murkmod/root_backup.img bs=4M status=progress
-
-        echo "Creating restore flag..."
         doas touch /mnt/stateful_partition/restore-emergency-backup
         doas chmod 777 /mnt/stateful_partition/restore-emergency-backup
-
-        echo "Backups complete, actually updating now..."
-
-        # read choice
         local reco_dl=$(jq ".builds.$board[].$hwid.pushRecoveries[$latest_milestone]" <<< "$builds")
         local tmpdir=/mnt/stateful_partition/update_tmp/
         doas mkdir $tmpdir
-        echo "Downloading ${remote_version} from ${reco_dl}..."
+        echo "Downloading ${remote_version}..."
         curl "${reco_dl:1:-1}" | doas "dd of=$tmpdir/image.zip status=progress"
-        echo "Unzipping update binary..."
         cat $tmpdir/image.zip | gunzip | doas "dd of=$tmpdir/image.bin status=progress"
         doas rm -f $tmpdir/image.zip
-        echo "Invoking image patcher..."
         if [ "$USE_ORIG_SPLASH" == 0 ]; then
             doas image_patcher.sh "$tmpdir/image.bin"
         else
             doas image_patcher.sh "$tmpdir/image.bin" cros
         fi
-        
-
         local loop=$(doas losetup -f | tr -d '\r' | tail -1)
         doas losetup -P "$loop" "$tmpdir/image.bin"
-
-        echo "Performing update..."
-        printf "Overwriting partitions in 3 (this is your last chance to cancel)..."
-        sleep 1
-        printf "2..."
-        sleep 1
-        echo "1..."
-        sleep 1
-        echo "Installing kernel patch to ${kerndev}..."
+        printf "Overwriting partitions in 3..."
+        sleep 1; printf "2..."; sleep 1; echo "1..."; sleep 1
         doas dd if="${loop}p4" of="$kerndev" status=progress
-        echo "Installing root patch to ${rootdev}..."
         doas dd if="${loop}p3" of="$rootdev" status=progress
-        echo "Setting kernel priority..."
         doas cgpt add "$dst" -i 4 -P 0
         doas cgpt add "$dst" -i 2 -P 0
         doas cgpt add "$dst" -i "$tgt_kern" -P 1
-
-        echo "Setting crossystem and vpd block_devmode..."
         doas crossystem.old block_devmode=0
         doas vpd -i RW_VPD -s block_devmode=0
-
-        echo "Cleaning up..."
         doas rm -Rf $tmpdir
-    
         read -p "Done! Press enter to continue."
     else
         echo "Update not required."
@@ -967,7 +930,7 @@ attempt_chromeos_update(){
     fi
 }
 
-attempt_backup_update(){
+attempt_backup_update() {
     local builds=$(curl https://chromiumdash.appspot.com/cros/fetch_serving_builds?deviceCategory=Chrome%20OS)
     local release_board=$(lsbval CHROMEOS_RELEASE_BOARD)
     local board=${release_board%%-*}
@@ -976,70 +939,36 @@ attempt_backup_update(){
     local latest_milestone=$(jq "(.builds.$board[].$hwid.pushRecoveries | keys) | .[length - 1]" <<<"$builds")
     local remote_version=$(jq ".builds.$board[].$hwid[$latest_milestone].version" <<<"$builds")
     local remote_version=${remote_version:1:-1}
-
-    read -p "Do you want to make a backup of your backup, just in case? (Y/n) " yn
-
-    case $yn in 
-        [yY] ) do_backup=true ;;
-        [nN] ) do_backup=false ;;
-        * ) do_backup=true ;;
+    read -p "Do you want to make a backup of your backup? (Y/n) " yn
+    case $yn in
+        [nN]) do_backup=false ;;
+        *) do_backup=true ;;
     esac
-
-    echo "Updating to ${remote_version}. THIS CAN POSSIBLY DAMAGE YOUR EMERGENCY BACKUP! Press enter to confirm, Ctrl+C to cancel."
+    echo "Updating backup to ${remote_version}. THIS CAN POSSIBLY DAMAGE YOUR EMERGENCY BACKUP! Press enter to confirm, Ctrl+C to cancel."
     read -r
-
-    echo "Finding correct partitions..."
     local dst=$(get_largest_cros_blockdev)
     local tgt_kern=$(opposite_num $(get_booted_kernnum))
     local tgt_root=$(( $tgt_kern + 1 ))
-
     local kerndev=${dst}p${tgt_kern}
     local rootdev=${dst}p${tgt_root}
-
-    if [ "$do_backup" = true ] ; then
-        echo "Dumping emergency revert backup to stateful (this might take a while)..."
-
-        echo "Dumping kernel..."
+    if [ "$do_backup" = true ]; then
         doas dd if=$kerndev of=/mnt/stateful_partition/murkmod/kern_backup.img bs=4M status=progress
-        echo "Dumping rootfs..."
         doas dd if=$rootdev of=/mnt/stateful_partition/murkmod/root_backup.img bs=4M status=progress
-
-        echo "Backups complete, actually updating now..."
     fi
-
-    # read choice
     local reco_dl=$(jq ".builds.$board[].$hwid.pushRecoveries[$latest_milestone]" <<< "$builds")
     local tmpdir=/mnt/stateful_partition/update_tmp/
     doas mkdir $tmpdir
-    echo "Downloading ${remote_version} from ${reco_dl}..."
     curl "${reco_dl:1:-1}" | doas "dd of=$tmpdir/image.zip status=progress"
-    echo "Unzipping update binary..."
     cat $tmpdir/image.zip | gunzip | doas "dd of=$tmpdir/image.bin status=progress"
     doas rm -f $tmpdir/image.zip
-
-    echo "Creating loop device..."
     local loop=$(doas losetup -f | tr -d '\r')
     doas losetup -P "$loop" "$tmpdir/image.bin"
-
-    printf "Overwriting backup in 3 (this is your last chance to cancel)..."
-    sleep 1
-    printf "2..."
-    sleep 1
-    echo "1..."
-    sleep 1
-    echo "Performing update..."
-    echo "Installing kernel patch to ${kerndev}..."
+    printf "Overwriting backup in 3..."; sleep 1; printf "2..."; sleep 1; echo "1..."; sleep 1
     doas dd if="${loop}p4" of="$kerndev" status=progress
-    echo "Installing root patch to ${rootdev}..."
     doas dd if="${loop}p3" of="$rootdev" status=progress
-
-    echo "Setting crossystem and vpd block_devmode..."
     doas crossystem.old block_devmode=0
     doas vpd -i RW_VPD -s block_devmode=0
-
-    echo "Cleaning up..."
     doas rm -Rf $tmpdir
-
     read -p "Done! Press enter to continue."
 }
 
@@ -1048,17 +977,12 @@ attempt_restore_backup_backup() {
     dst=$(get_largest_cros_blockdev)
     tgt_kern=$(opposite_num $(get_booted_kernnum))
     tgt_root=$(( $tgt_kern + 1 ))
-
     kerndev=${dst}p${tgt_kern}
     rootdev=${dst}p${tgt_root}
-
     if [ -f /mnt/stateful_partition/murkmod/kern_backup.img ] && [ -f /mnt/stateful_partition/murkmod/root_backup.img ]; then
-        echo "Backup files found!"
-        echo "Restoring kernel..."
+        echo "Backup files found! Restoring..."
         dd if=/mnt/stateful_partition/murkmod/kern_backup.img of=$kerndev bs=4M status=progress
-        echo "Restoring rootfs..."
         dd if=/mnt/stateful_partition/murkmod/root_backup.img of=$rootdev bs=4M status=progress
-        echo "Removing backup files..."
         rm /mnt/stateful_partition/murkmod/kern_backup.img
         rm /mnt/stateful_partition/murkmod/root_backup.img
         echo "Restored successfully!"
@@ -1073,46 +997,26 @@ attempt_chromebrew_install() {
     echo "Installing Chromebrew..."
     doas 'sudo -i -u chronos bash -c "bash <(curl -L https://raw.githubusercontent.com/chromebrew/chromebrew/master/install.sh) && . ~/.bashrc"'
     read -p 'Press enter to exit'
-
 }
 
 attempt_dev_install() {
     doas 'dev_install'
 }
 
-edit_pollen() {
-    mkdir -p /mnt/stateful_partition/murkmod/pollen
-    if [ ! -f /mnt/stateful_partition/murkmod/pollen/policy.json ]; then
-        echo "{}" > /mnt/stateful_partition/murkmod/pollen/policy.json
-    fi
-    edit /mnt/stateful_partition/murkmod/pollen/policy.json
-    if touch /etc/opt/chrome/policies/managed/.murkmod_test 2>/dev/null; then
-        rm -f /etc/opt/chrome/policies/managed/.murkmod_test
-        cp /mnt/stateful_partition/murkmod/pollen/policy.json /etc/opt/chrome/policies/managed/policy.json
-    else
-        mkdir -p /tmp/overlay/etc/opt/chrome/policies/managed
-        cp /mnt/stateful_partition/murkmod/pollen/policy.json /tmp/overlay/etc/opt/chrome/policies/managed/policy.json
-    fi
+run_firmware_util() {
+    doas "bash <(curl -L https://mrchromebox.tech/firmware-util.sh)"
 }
 
-run_firmware_util() {
-doas "bash <(curl -L https://mrchromebox.tech/firmware-util.sh)"
-    }
-
-#!/usr/bin/env bash
+# ─── Entry point ──────────────────────────────────────────────────────────────
 
 if [ "$0" = "$BASH_SOURCE" ]; then
     if [ -t 0 ]; then
         stty sane
     fi
-
     if [ -f /mnt/stateful_partition/murkmod/mushm_password ]; then
         locked_main
     else
         main
     fi
 fi
-
-chard_launch() {
-    chard root
-}
+ENDOFFILE
